@@ -3,14 +3,16 @@ import Features from '@/components/home/features'
 import Hero from '@/components/home/hero'
 import Pricing from '@/components/home/pricing'
 import Testimonials from '@/components/home/testimonials'
+import { getCurrentUser } from '@/lib/session'
 
-const Home = () => {
+const Home = async () => {
+  const user = await getCurrentUser()
   return (
     <div>
       <Hero />
       <Clients />
       <Features />
-      <Pricing />
+      <Pricing isLoggedIn={user ? true : false} />
       <Testimonials />
     </div>
   )

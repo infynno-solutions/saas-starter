@@ -1,3 +1,4 @@
+import { PrismaAdapter } from '@auth/prisma-adapter'
 import * as bcrypt from 'bcrypt'
 import { NextAuthOptions } from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
@@ -6,6 +7,7 @@ import { db } from './db'
 import { env } from '@/env.mjs'
 
 export const authOptions: NextAuthOptions = {
+  adapter: PrismaAdapter(db) as any,
   secret: env.NEXTAUTH_SECRET,
   session: {
     strategy: 'jwt',

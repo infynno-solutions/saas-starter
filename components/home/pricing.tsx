@@ -1,13 +1,16 @@
-import Link from 'next/link'
+'use client'
+
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 import { LuCheck } from 'react-icons/lu'
-import { buttonVariants } from '../ui/button'
+import { Button } from '../ui/button'
+import { useToast } from '../ui/use-toast'
 import { cn } from '@/lib/utils'
 
 const tiers = [
   {
     name: 'Freelancer',
-    id: 'tier-freelancer',
-    href: '#',
+    id: 'freelancer',
     priceMonthly: '$24',
     description: 'The essentials to provide your best work for clients.',
     features: [
@@ -20,8 +23,7 @@ const tiers = [
   },
   {
     name: 'Startup',
-    id: 'tier-startup',
-    href: '#',
+    id: 'startup',
     priceMonthly: '$32',
     description: 'A plan that scales with your rapidly growing business.',
     features: [
@@ -35,8 +37,7 @@ const tiers = [
   },
   {
     name: 'Enterprise',
-    id: 'tier-enterprise',
-    href: '#',
+    id: 'enterprise',
     priceMonthly: '$48',
     description: 'Dedicated support and infrastructure for your company.',
     features: [
@@ -50,7 +51,35 @@ const tiers = [
   },
 ]
 
-const Pricing = () => {
+interface PricingProps {
+  isLoggedIn: boolean
+}
+
+const Pricing = ({ isLoggedIn }: PricingProps) => {
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const router = useRouter()
+  const { toast } = useToast()
+
+  const onSubmit = async (stripePlanId: string) => {
+    setIsLoading(!isLoading)
+    const response = await fetch(
+      `/api/users/stripe?stripePlanId=${stripePlanId}`,
+    )
+
+    if (!response?.ok) {
+      return toast({
+        title: 'Something went wrong.',
+        description: 'Please refresh the page and try again.',
+        variant: 'destructive',
+      })
+    }
+
+    const session = await response.json()
+    if (session) {
+      window.location.href = session.url
+    }
+  }
+
   return (
     <div className="bg-white py-8 sm:py-24" id="pricing">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -120,13 +149,14 @@ const Pricing = () => {
                   ))}
                 </ul>
               </div>
-              <Link
-                aria-describedby={tier.id}
-                className={cn(buttonVariants({ variant: 'default' }), 'mt-8')}
-                href={tier.href}
+              <Button
+                className="mt-8"
+                onClick={() =>
+                  isLoggedIn ? onSubmit(tier.id) : router.push('/auth/login')
+                }
               >
                 Buy plan
-              </Link>
+              </Button>
             </div>
           ))}
         </div>
