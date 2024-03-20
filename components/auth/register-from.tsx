@@ -20,20 +20,17 @@ import {
 } from '../ui/form'
 import { Input } from '../ui/input'
 import { useToast } from '../ui/use-toast'
+import { registerSchema, useRegister } from '@/hooks/auth/use-register'
 
-const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string(),
-})
-
-const LoginForm = () => {
+const RegisterForm = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { toast } = useToast()
   const router = useRouter()
 
-  const form = useForm<z.infer<typeof loginSchema>>({
-    resolver: zodResolver(loginSchema),
+  const form = useForm<z.infer<typeof registerSchema>>({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
+      name: '',
       email: '',
       password: '',
     },
@@ -44,21 +41,15 @@ const LoginForm = () => {
     await signIn('google')
   }
 
-  const handleLogin = async (values: z.infer<typeof loginSchema>) => {
-    setIsLoading(true)
-    await signIn('credentials', { ...values, redirect: false }).then((res) => {
-      setIsLoading(false)
-      if (!res) {
-        toast({ title: 'Something went wrong!!', variant: 'destructive' })
-        return
-      }
-      if (res.error) {
-        toast({ title: res.error, variant: 'destructive' })
-        return
-      }
-      router.push('/')
+  const { mutate, isPending } = useRegister()
+
+  const handleLogin = async (values: z.infer<typeof registerSchema>) =>
+    mutate(values, {
+      onSuccess: (res) => {
+        toast({ title: res?.data?.message || 'Success' })
+        router.push('/')
+      },
     })
-  }
 
   return (
     <div className="mt-8">
@@ -75,7 +66,7 @@ const LoginForm = () => {
           <FcGoogle className="mr-2 h-8 w-8" />
         )}
 
-        <span>Sign in with Google</span>
+        <span>Sign up with Google</span>
       </Button>
       <div className="h-1 border-b py-4" />
       <Form {...form}>
@@ -83,6 +74,20 @@ const LoginForm = () => {
           className="mt-6 space-y-6"
           onSubmit={form.handleSubmit(handleLogin)}
         >
+          <FormField
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Full Name</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+            control={form.control}
+            name="name"
+          />
           <FormField
             render={({ field }) => (
               <FormItem>
@@ -111,17 +116,25 @@ const LoginForm = () => {
             control={form.control}
             name="password"
           />
-          <Link className="block text-lg underline" href="/auth/reset-password">
-            Forgot Password?
-          </Link>
           <Button className="w-full rounded-lg" size="lg" type="submit">
-            {isLoading && <LuLoader className="mr-2 h-5 w-5 animate-spin" />}
-            <span>Sign In</span>
+            {isPending && <LuLoader className="mr-2 h-5 w-5 animate-spin" />}
+            <span>Sign Up</span>
           </Button>
+          <p className="text-sm">
+            By signing up, you agree to our{' '}
+            <Link className="underline" href="/">
+              Terms & Conditions
+            </Link>{' '}
+            and{' '}
+            <Link className="underline" href="/">
+              Privacy Policy
+            </Link>
+            .
+          </p>
         </form>
       </Form>
     </div>
   )
 }
 
-export default LoginForm
+export default RegisterForm

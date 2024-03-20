@@ -13,7 +13,7 @@ const AuthNavigation = () => {
         </Link>
         <Link
           className={cn(buttonVariants({ variant: 'outline' }), 'rounded-lg')}
-          href="/register"
+          href="/auth/register"
         >
           Sign Up
         </Link>
