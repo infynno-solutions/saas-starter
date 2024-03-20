@@ -64,7 +64,11 @@ const Navigation = ({ session }: NavigationProps) => {
           </div>
           <div className="hidden items-center lg:flex">
             {items.map((item, i) => (
-              <Link key={i} className="px-2 font-medium" href={item.href}>
+              <Link
+                key={i}
+                className="px-4 font-medium text-gray-700 hover:text-black"
+                href={item.href}
+              >
                 {item.title}
               </Link>
             ))}

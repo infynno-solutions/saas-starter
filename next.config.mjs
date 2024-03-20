@@ -7,6 +7,12 @@ const nextConfig = {
       {
         hostname: 'lh3.googleusercontent.com',
       },
+      {
+        hostname: 'tailwindui.com',
+      },
+      {
+        hostname: 'images.unsplash.com',
+      },
     ],
   },
 }
