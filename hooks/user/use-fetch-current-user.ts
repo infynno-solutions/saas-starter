@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-import axios, { AxiosResponse } from 'axios'
-
-interface CurrentUserData {
+import axios from 'axios'
+export interface CurrentUserData {
   email: string
   emailVerified: null
   id: string
