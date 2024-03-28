@@ -30,6 +30,7 @@ const BillingDetails = ({ user }: BillingDetailsProps) => {
     const response = await fetch('/api/users/stripe')
 
     if (!response?.ok) {
+      setIsLoading(!isLoading)
       return toast({
         title: 'Something went wrong.',
         description: 'Please refresh the page and try again.',
