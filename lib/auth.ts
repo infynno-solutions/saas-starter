@@ -58,4 +58,19 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
+
+  callbacks: {
+    async session({ session, token }) {
+      const user = await db.user.findUnique({
+        where: { email: session.user.email! },
+      })
+      session.user = {
+        id: user?.id as string,
+        name: user?.name as string,
+        email: user?.email as string,
+        image: user?.image as string,
+      }
+      return session
+    },
+  },
 }
