@@ -11,6 +11,7 @@ export const env = createEnv({
     STRIPE_FREELANCER_MONTHLY_PLAN_ID: z.string(),
     STRIPE_STARTUP_MONTHLY_PLAN_ID: z.string(),
     STRIPE_ENTERPRISE_MONTHLY_PLAN_ID: z.string(),
+    RESEND_API_KEY: z.string(),
   },
   client: {
     NEXT_PUBLIC_APP_URL: z.string(),
@@ -27,5 +28,6 @@ export const env = createEnv({
     STRIPE_ENTERPRISE_MONTHLY_PLAN_ID:
       process.env.STRIPE_ENTERPRISE_MONTHLY_PLAN_ID,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+    RESEND_API_KEY: process.env.RESEND_API_KEY,
   },
 })
