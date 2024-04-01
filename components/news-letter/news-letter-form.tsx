@@ -25,7 +25,7 @@ const NewsLetterForm = () => {
   const handleSubmit = (values: z.infer<typeof newsLetterSchema>) => {
     mutate(values, {
       onSuccess: () => {
-        toast({ title: 'You have subscribed to the news letter' })
+        toast({ title: 'You have subscribed to the Newsletter' })
       },
       onError: () => {
         toast({

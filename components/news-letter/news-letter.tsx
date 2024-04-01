@@ -10,8 +10,8 @@ const NewsLetter = () => {
             Get notified when we are launching.
           </p>
           <p className="mt-4 text-lg text-secondary-foreground">
-            Enter your email address to subscribe out news letter. Get the
-            latest blogs and information about our launch first.
+            Enter your email address to subscribe out Newsletter. Get the latest
+            blogs and information about our launch first.
           </p>
           <NewsLetterForm />
         </div>

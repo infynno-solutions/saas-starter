@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import mailchimp from '@mailchimp/mailchimp_marketing'
 import { env } from '@/env.mjs'
+import { NextResponse } from 'next/server'
 
 mailchimp.setConfig({
   apiKey: env.MAILCHIMP_API_KEY,
@@ -18,16 +19,16 @@ export const POST = async (req: Request) => {
     })
 
     if (response.status !== 'subscribed') {
-      return new Response(null, { status: 400 })
+      return NextResponse.json(null, { status: 400 })
     }
 
-    return new Response(null, { status: 200 })
+    return NextResponse.json(null, { status: 200 })
   } catch (error: any) {
     console.log('error', error)
     if (error instanceof z.ZodError) {
-      return new Response(JSON.stringify(error.issues), { status: 422 })
+      return NextResponse.json(error.issues, { status: 422 })
     }
 
-    return new Response(null, { status: 500 })
+    return NextResponse.json(null, { status: 500 })
   }
 }
