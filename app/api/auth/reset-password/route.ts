@@ -2,10 +2,7 @@ import * as bcrypt from 'bcrypt'
 import { NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 
-export const POST = async (
-  req: Request,
-  { params }: { params: { token: string } },
-) => {
+export const POST = async (req: Request) => {
   try {
     const data = await req.json()
     const { searchParams } = new URL(req.url)
@@ -21,13 +18,6 @@ export const POST = async (
         { status: 404 },
       )
     }
-
-    // if (exists.expires && currentTime < exists.expires!) {
-    //   return NextResponse.json(
-    //     { message: 'Reset password link is expired' },
-    //     { status: 400 },
-    //   )
-    // }
 
     const updatedPassword = await bcrypt.hash(data.password, 12)
 

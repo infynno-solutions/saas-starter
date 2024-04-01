@@ -35,10 +35,9 @@ export const POST = async (req: Request) => {
     const resend = new Resend(env.RESEND_API_KEY)
 
     const emailSent = await resend.emails.send({
-      from: 'onboarding@resend.dev',
+      from: env.RESEND_SENDER_ADDRESS,
       subject: 'Reset your SaaS Starter password',
-      // TODO: Remove static email address and add the userData.email (reques user's email address)
-      to: 'sahib.infynno@gmail.com',
+      to: userData.email,
       html: resetPasswordEmail.replace('VERIFICATION_TOKEN', newToken),
     })
 

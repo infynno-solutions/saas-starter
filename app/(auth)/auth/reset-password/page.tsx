@@ -1,7 +1,7 @@
 import ResetPasswordForm from '@/components/auth/reset-password-form'
 import React from 'react'
 
-const page = () => {
+const ResetPassword = () => {
   return (
     <div className="mx-auto max-w-xl px-4 py-16">
       <h1 className="text-2xl font-bold md:text-3xl lg:text-4xl">
@@ -12,4 +12,4 @@ const page = () => {
   )
 }
 
-export default page
+export default ResetPassword
