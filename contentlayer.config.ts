@@ -18,7 +18,7 @@ const computedFields: ComputedFields<'Post'> = {
 
 export const Post = defineDocumentType(() => ({
   name: 'Post',
-  filePathPattern: `blogs/**/*.mdx`,
+  filePathPattern: `**/*.mdx`,
   contentType: 'mdx',
   fields: {
     title: {
@@ -37,6 +37,6 @@ export const Post = defineDocumentType(() => ({
 }))
 
 export default makeSource({
-  contentDirPath: '../saas-starter/components/dashboard/content-layer/content',
+  contentDirPath: './content',
   documentTypes: [Post],
 })
