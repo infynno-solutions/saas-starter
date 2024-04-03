@@ -27,7 +27,7 @@ import { debounce } from 'lodash'
 const UsersTable = ({ searchTerm }: { searchTerm: string }) => {
   const [pagination, setPagination] = React.useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 10,
+    pageSize: 2,
   })
   const [sortBy, setSortBy] = useState('')
 
@@ -102,6 +102,8 @@ const UsersTable = ({ searchTerm }: { searchTerm: string }) => {
     autoResetPageIndex: false,
   })
 
+  console.log(table.getSortedRowModel(), 'table data')
+
   const handleSearch = useCallback(
     debounce(() => refetch(), 1500),
     [searchTerm],
@@ -148,7 +150,7 @@ const UsersTable = ({ searchTerm }: { searchTerm: string }) => {
           ))}
         </thead>
         <tbody>
-          {table.getCoreRowModel().rows.map((row) => (
+          {table.getSortedRowModel().rows.map((row) => (
             <tr key={row.id}>
               {row.getVisibleCells().map((cell) => (
                 <td
