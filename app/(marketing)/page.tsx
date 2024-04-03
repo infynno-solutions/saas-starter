@@ -1,7 +1,7 @@
 import Clients from '@/components/home/clients'
 import Features from '@/components/home/features'
 import Hero from '@/components/home/hero'
-import Pricing from '@/components/home/pricing'
+import Pricing from '@/components/home/pricing/pricing'
 import Testimonials from '@/components/home/testimonials'
 import NewsLetter from '@/components/news-letter'
 import { getCurrentUser } from '@/lib/session'
