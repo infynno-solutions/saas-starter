@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   ColumnDef,
   PaginationState,
@@ -20,18 +20,26 @@ import {
   PaginationPrevious,
 } from '../ui/pagination'
 import { FaSortDown, FaSortUp } from 'react-icons/fa'
+import { FaRegCircleCheck } from 'react-icons/fa6'
+import { CgCloseO } from 'react-icons/cg'
+import { debounce } from 'lodash'
 
-const UsersTable = () => {
+const UsersTable = ({ searchTerm }: { searchTerm: string }) => {
   const [pagination, setPagination] = React.useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 3,
+    pageSize: 10,
   })
   const [sortBy, setSortBy] = useState('')
 
-  const { data: apiData } = useFetchUsers({
+  const {
+    data: apiData,
+    isLoading,
+    refetch,
+  } = useFetchUsers({
     pageNo: pagination.pageIndex + 1,
     perPage: pagination.pageSize,
     sortBy,
+    search: searchTerm,
   })
 
   const userData = [...(apiData?.data?.users ?? [])]
@@ -42,25 +50,47 @@ const UsersTable = () => {
       {
         accessorKey: 'name',
         header: 'Name',
-        cell: (info) => info.getValue(),
+        cell: (info) =>
+          isLoading ? (
+            <div className="h-5 w-40 animate-pulse rounded-md bg-secondary" />
+          ) : (
+            info.getValue()
+          ),
       },
       {
         accessorKey: 'email',
         header: 'Email',
-        cell: (info) => info.getValue(),
+        cell: (info) =>
+          isLoading ? (
+            <div className="h-5 w-56 animate-pulse rounded-md bg-secondary" />
+          ) : (
+            info.getValue()
+          ),
       },
       {
         accessorKey: 'emailVerified',
         header: 'Email verified',
-        cell: (info) => info.getValue(),
+        cell: (info) => {
+          return (
+            <div className="flex items-center justify-center">
+              {isLoading ? (
+                <div className="h-5 w-20 animate-pulse rounded-md bg-secondary" />
+              ) : info.getValue() ? (
+                <FaRegCircleCheck className="h-4 w-4 text-green-500" />
+              ) : (
+                <CgCloseO className="h-4 w-4 text-red-500" />
+              )}
+            </div>
+          )
+        },
       },
     ],
-    [userData],
+    [isLoading, userData],
   )
 
   const table = useReactTable({
     columns,
-    data: userData,
+    data: isLoading ? Array(5).fill({}) : userData,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -71,6 +101,16 @@ const UsersTable = () => {
     },
     autoResetPageIndex: false,
   })
+
+  const handleSearch = useCallback(
+    debounce(() => refetch(), 1500),
+    [searchTerm],
+  )
+
+  useEffect(() => {
+    handleSearch()
+    return () => handleSearch.cancel()
+  }, [searchTerm])
 
   return (
     <>
@@ -108,10 +148,13 @@ const UsersTable = () => {
           ))}
         </thead>
         <tbody>
-          {table.getRowModel().rows.map((row) => (
+          {table.getCoreRowModel().rows.map((row) => (
             <tr key={row.id}>
               {row.getVisibleCells().map((cell) => (
-                <td key={cell.id} className="border px-4 py-2 text-start">
+                <td
+                  key={cell.id}
+                  className="border px-4 py-2 text-start text-sm"
+                >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}
@@ -126,7 +169,7 @@ const UsersTable = () => {
               className={
                 pagination.pageIndex === 0
                   ? 'pointer-events-none opacity-50'
-                  : undefined
+                  : 'cursor-pointer'
               }
               onClick={() => {
                 setPagination({
@@ -141,7 +184,7 @@ const UsersTable = () => {
             <PaginationNext
               className={
                 pagination.pageIndex < totalRecords / pagination.pageSize - 1
-                  ? undefined
+                  ? 'cursor-pointer'
                   : 'pointer-events-none opacity-50'
               }
               onClick={() => {
