@@ -1,4 +1,4 @@
-import { NextRequest } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { z } from 'zod'
 import { env } from '@/env.mjs'
@@ -30,7 +30,7 @@ export async function GET(req: NextRequest) {
     const session = await getServerSession(authOptions)
 
     if (!session?.user || !session?.user.email) {
-      return new Response(null, { status: 403 })
+      return NextResponse.json(null, { status: 403 })
     }
 
     const subscriptionPlan = await getUserSubscriptionPlan(session.user.id)
@@ -41,7 +41,7 @@ export async function GET(req: NextRequest) {
         return_url: billingUrl,
       })
 
-      return new Response(JSON.stringify({ url: stripeSession.url }))
+      return NextResponse.json({ url: stripeSession.url })
     }
 
     const stripeSession = await stripe.checkout.sessions.create({
@@ -62,13 +62,13 @@ export async function GET(req: NextRequest) {
       },
     })
 
-    return new Response(JSON.stringify({ url: stripeSession.url }))
+    return NextResponse.json({ url: stripeSession.url })
   } catch (error: any) {
     console.log('error', error)
     if (error instanceof z.ZodError) {
-      return new Response(JSON.stringify(error.issues), { status: 422 })
+      return NextResponse.json(error.issues, { status: 422 })
     }
 
-    return new Response(null, { status: 500 })
+    return NextResponse.json(null, { status: 500 })
   }
 }
