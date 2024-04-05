@@ -27,7 +27,7 @@ const loginSchema = z.object({
 })
 
 const LoginForm = () => {
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<string>('')
   const { toast } = useToast()
   const router = useRouter()
 
@@ -40,14 +40,14 @@ const LoginForm = () => {
   })
 
   const handleGoogleLogin = async () => {
-    setIsLoading(true)
+    setIsLoading('google')
     await signIn('google')
   }
 
   const handleLogin = async (values: z.infer<typeof loginSchema>) => {
-    setIsLoading(true)
+    setIsLoading('direct')
     await signIn('credentials', { ...values, redirect: false }).then((res) => {
-      setIsLoading(false)
+      setIsLoading('')
       if (!res) {
         toast({ title: 'Something went wrong!!', variant: 'destructive' })
         return
@@ -69,7 +69,7 @@ const LoginForm = () => {
         variant="outline"
         onClick={handleGoogleLogin}
       >
-        {isLoading ? (
+        {isLoading === 'google' ? (
           <LuLoader className="mr-2 h-8 w-8 animate-spin" />
         ) : (
           <FcGoogle className="mr-2 h-8 w-8" />
@@ -111,11 +111,16 @@ const LoginForm = () => {
             control={form.control}
             name="password"
           />
-          <Link className="block text-lg underline" href="/auth/reset-password">
+          <Link
+            className="block text-lg underline"
+            href="/auth/forgot-password"
+          >
             Forgot Password?
           </Link>
           <Button className="w-full rounded-lg" size="lg" type="submit">
-            {isLoading && <LuLoader className="mr-2 h-5 w-5 animate-spin" />}
+            {isLoading === 'direct' && (
+              <LuLoader className="mr-2 h-5 w-5 animate-spin" />
+            )}
             <span>Sign In</span>
           </Button>
         </form>
